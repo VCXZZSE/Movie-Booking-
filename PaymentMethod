@@ -1,0 +1,279 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Random;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+public class PaymentMethod {
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            createAndShowWelcomeGUI();
+        });
+    }
+
+    private static int bookedSeats = 0;
+
+    private static void createAndShowWelcomeGUI() {
+        // Create the welcome frame
+        JFrame welcomeFrame = new JFrame("Movie Booking Software");
+        welcomeFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        welcomeFrame.setSize(900, 500);
+        welcomeFrame.getContentPane().setBackground(new Color(236, 0, 54)); // Blue background color
+
+        // Create a JPanel for the welcome frame
+        JPanel welcomePanel = new JPanel();
+        welcomePanel.setBackground(new Color(236, 0, 54));
+        welcomeFrame.add(welcomePanel);
+        welcomePanel.setLayout(new BorderLayout());
+
+        // Add a welcome message label
+        JLabel welcomeLabel = new JLabel("Welcome To The Movie Booking App");
+        welcomeLabel.setForeground(Color.BLACK); // Black text color
+        welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER); // Center-align the text
+        welcomePanel.add(welcomeLabel, BorderLayout.CENTER);
+
+        Font labelFont = new Font("SansSerif", Font.BOLD, 24); // Change the font size
+        welcomeLabel.setFont(labelFont);
+
+        // Create a "Continue" button
+        JButton continueButton = new JButton("Continue To Book Your Tomorrow's Ticket");
+        continueButton.setBackground(new Color(0, 102, 204)); // Blue background color
+        continueButton.setForeground(Color.BLACK);
+        continueButton.setFont(new Font("SansSerif", Font.BOLD, 19)); // Change the font size
+        welcomePanel.add(continueButton, BorderLayout.SOUTH);
+
+        // ActionListener for the "Continue" button
+        continueButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                welcomeFrame.dispose(); // Close the welcome frame
+                createAndShowMovieSelectionGUI(); // Show the movie selection page
+            }
+        });
+
+        welcomeFrame.setVisible(true);
+    }
+
+    private static void createAndShowMovieSelectionGUI() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Load the icon image
+        Image iconImage = new ImageIcon("icon.png").getImage(); // Replace "icon.png" with the path to your icon image
+
+        // Create the main movie selection frame with the icon image
+        JFrame movieSelectionFrame = new JFrame("Movie Selection");
+        movieSelectionFrame.setIconImage(iconImage); // Set the icon image
+        movieSelectionFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        movieSelectionFrame.setSize(800, 500); // Enlarge the window
+        movieSelectionFrame.getContentPane().setBackground(new Color(236, 0, 54)); // Blue background color
+
+        // Create a JPanel for the movie selection frame
+        JPanel panel = new JPanel();
+        panel.setBackground(new Color(236, 0, 54)); // Blue background color
+        movieSelectionFrame.add(panel);
+        panel.setLayout(new BorderLayout());
+
+        // Create a panel for the top part of the frame
+        JPanel topPanel = new JPanel();
+        topPanel.setBackground(new Color(236, 0, 54));
+        panel.add(topPanel, BorderLayout.NORTH);
+
+        // Add a label and a combo box for selecting a movie
+        JLabel movieLabel = new JLabel("Choose a  Movie:");
+        movieLabel.setForeground(Color.BLACK); // Black text color
+        topPanel.add(movieLabel);
+
+        Font labelFont = new Font("SansSerif", Font.BOLD, 19); // Change the font size
+        movieLabel.setFont(labelFont);
+
+        JComboBox<String> movieComboBox = new JComboBox<>();
+        movieComboBox.addItem("Yeh Jawani Hain Deewani");
+        movieComboBox.addItem("Blade Runner 2049");
+        movieComboBox.addItem("Interstellar");
+        movieComboBox.addItem("Inception");
+        movieComboBox.addItem("Alien: Covenant");
+        movieComboBox.setBackground(new Color(236, 254, 255)); // Blue background color
+        movieComboBox.setForeground(Color.BLACK); // Black text color
+        topPanel.add(movieComboBox);
+
+        // Create a panel for the middle part of the frame
+        JPanel middlePanel = new JPanel();
+        middlePanel.setBackground(new Color(236, 0, 54));
+        panel.add(middlePanel, BorderLayout.CENTER);
+
+        // Add a label and a combo box for selecting a time slot
+        JLabel timeSlotLabel = new JLabel("Select a Time Slot:");
+        timeSlotLabel.setForeground(Color.BLACK);
+        middlePanel.add(timeSlotLabel);
+
+        Font timeSlotFont = new Font("SansSerif", Font.BOLD, 19);
+        timeSlotLabel.setFont(timeSlotFont);
+
+        JComboBox<String> timeSlotComboBox = new JComboBox<>();
+        timeSlotComboBox.addItem("Morning (9:00 AM)");
+        timeSlotComboBox.addItem("Afternoon (2:00 PM)");
+        timeSlotComboBox.addItem("Evening (6:00 PM)");
+        timeSlotComboBox.addItem("Night (9:00 PM)");
+        timeSlotComboBox.setBackground(new Color(236, 254, 255));
+        timeSlotComboBox.setForeground(Color.BLACK);
+        middlePanel.add(timeSlotComboBox);
+
+        // Create a panel for the bottom part of the frame
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setBackground(new Color(236, 0, 54));
+        panel.add(bottomPanel, BorderLayout.SOUTH);
+
+        JButton nextButton = new JButton("Next");
+        nextButton.setBackground(new Color(0, 102, 204)); // Blue background color
+        nextButton.setForeground(Color.BLACK);
+        bottomPanel.add(nextButton);
+
+        Font buttonFont = new Font("SansSerif", Font.BOLD, 19); // Change the font size
+        nextButton.setFont(buttonFont);
+
+        nextButton.setBackground(new Color(236, 0, 54));
+        nextButton.setForeground(Color.BLACK);
+
+        // ActionListener for the nextButton
+        nextButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedMovie = (String) movieComboBox.getSelectedItem();
+                String selectedTimeSlot = (String) timeSlotComboBox.getSelectedItem();
+                bookMovie(selectedMovie, selectedTimeSlot, movieSelectionFrame);
+            }
+        });
+
+        movieSelectionFrame.setVisible(true);
+    }
+
+    private static void bookMovie(String movie, String timeSlot, JFrame movieSelectionFrame) {
+        // Create a new frame for booking the selected movie
+        JFrame bookingFrame = new JFrame("Booking for " + movie);
+        bookingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        bookingFrame.setSize(800, 600);
+        bookingFrame.getContentPane().setBackground(new Color(236, 0, 54));
+
+        // Create a JPanel for the booking frame
+        JPanel panel = new JPanel();
+        panel.setBackground(new Color(236, 0, 54));
+        bookingFrame.add(panel);
+        panel.setLayout(new BorderLayout());
+
+        // Create a theater hall panel for seat selection
+        JPanel theaterPanel = new JPanel(new GridLayout(5, 8));
+        theaterPanel.setBackground(new Color(236, 0, 54));
+
+        // Create seat buttons
+        JButton[][] seatButtons = new JButton[5][8];
+        for (int row = 0; row < 5; row++) {
+            for (int seat = 0; seat < 8; seat++) {
+                int seatNumber = (row * 8) + seat + 1;
+                seatButtons[row][seat] = new JButton(Integer.toString(seatNumber));
+                seatButtons[row][seat].setBackground(Color.GREEN);
+                seatButtons[row][seat].setForeground(Color.BLUE);
+                theaterPanel.add(seatButtons[row][seat]);
+                int finalRow = row;
+                int finalSeat = seat;
+                seatButtons[row][seat].addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        JButton clickedButton = seatButtons[finalRow][finalSeat];
+                        if (clickedButton.getBackground().equals(Color.GREEN)) {
+                            if (bookedSeats < 2) {
+                                clickedButton.setBackground(Color.RED);
+                                bookedSeats++;
+                            } else {
+                                JOptionPane.showMessageDialog(bookingFrame, "You can book a maximum of 2 seats.", "Seat Booking", JOptionPane.WARNING_MESSAGE);
+                            }
+                        } else if (clickedButton.getBackground().equals(Color.RED)) {
+                            clickedButton.setBackground(Color.GREEN);
+                            bookedSeats--;
+                        }
+                    }
+                });
+            }
+        }
+
+        panel.add(new JScrollPane(theaterPanel), BorderLayout.CENTER);
+
+        // Add a button to book the selected seats
+        JButton bookButton = new JButton("Book Selected Seats");
+        bookButton.setBackground(new Color(255, 204, 0));
+        bookButton.setForeground(Color.BLUE);
+        panel.add(bookButton, BorderLayout.SOUTH);
+
+        // ActionListener for the bookButton
+        bookButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                StringBuilder selectedSeats = new StringBuilder();
+                int totalAmount = 0;
+                for (int row = 0; row < 5; row++) {
+                    for (int seat = 0; seat < 8; seat++) {
+                        if (seatButtons[row][seat].getBackground().equals(Color.RED)) {
+                            selectedSeats.append("Seat ").append(seatButtons[row][seat].getText()).append(", ");
+                            totalAmount += 250;
+                            seatButtons[row][seat].setBorder(BorderFactory.createLineBorder(Color.CYAN, 2));
+                        }
+                    }
+                }
+
+                if (selectedSeats.length() > 0) {
+                    String name = JOptionPane.showInputDialog(bookingFrame, "Enter your name:");
+                    if (name != null && !name.isEmpty()) {
+                        String phoneNumber = JOptionPane.showInputDialog(bookingFrame, "Enter your phone number:");
+                        String email = JOptionPane.showInputDialog(bookingFrame, "Enter your email:");
+
+                        Random random = new Random();
+                        int ticketNumber = 1000 + random.nextInt(9000);
+
+                        FileWriter fileWriter;
+                        try {
+                            fileWriter = new FileWriter("movie_bookings.txt", true);
+                            fileWriter.write("Movie: " + movie + ", Time Slot: " + timeSlot + "\n");
+                            fileWriter.write("Name: " + name + ", Phone Number: " + phoneNumber + ", Email: " + email + "\n");
+                            fileWriter.write("Selected Seats: " + selectedSeats.toString() + "\n");
+                            fileWriter.write("Total Amount: " + totalAmount + " INR\n");
+                            fileWriter.write("Ticket Number: " + ticketNumber + "\n\n");
+                            fileWriter.close();
+                            
+                            // Here, we open a PayPal payment link in a web browser
+                            String paypalPaymentLink = "https://paypal.me/moviebook?country.x=IN&locale.x=en_GB";
+                            try {
+                                Desktop.getDesktop().browse(new URI(paypalPaymentLink));
+                            } catch (IOException | URISyntaxException ex) {
+                                ex.printStackTrace();
+                            }
+
+                            // In a real implementation, you would wait for payment confirmation
+                            // and handle it accordingly. This example just opens a browser link.
+
+                            // After successful payment, you can provide the ticket number.
+
+                            JOptionPane.showMessageDialog(bookingFrame, "Thank you for booking!\nAmount Payable: " + totalAmount + " INR\nTicket Number: " + ticketNumber, "Booking Confirmation", JOptionPane.INFORMATION_MESSAGE);
+                            bookingFrame.dispose();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(bookingFrame, "Please enter your name.", "Booking Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(bookingFrame, "Please select at least one seat.", "Booking Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        bookingFrame.setVisible(true);
+    }
+}
